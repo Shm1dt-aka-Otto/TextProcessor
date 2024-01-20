@@ -1,0 +1,26 @@
+﻿<Window x:Class="TextProcessor.CustomMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TextProcessor"
+        mc:Ignorable="d"
+        Title="Текст" Height="210" Width="310" ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Icons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <TextBlock x:Name="textTitle" Margin="47,10,10,0" TextWrapping="Wrap" Text="Текст" VerticalAlignment="Top" FontSize="22"/>
+        <Frame x:Name="frameIcon" HorizontalAlignment="Left" Height="32" Margin="10,10,0,0" VerticalAlignment="Top" Width="32"/>
+        <ScrollViewer x:Name="scrviewerDescription" Margin="10,47,10,45" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="textDescription" TextWrapping="Wrap" Text="Текст"/>
+        </ScrollViewer>
+        <Button x:Name="bFirst" Content="Текст" HorizontalAlignment="Left" Margin="209,141,0,0" VerticalAlignment="Top" Width="75" Click="bFirst_Click"/>
+        <Button x:Name="bSecond" Content="Текст" HorizontalAlignment="Left" Margin="129,141,0,0" VerticalAlignment="Top" Width="75" Click="bSecond_Click"/>
+        <Button x:Name="bThird" Content="Текст" HorizontalAlignment="Left" Margin="49,141,0,0" VerticalAlignment="Top" Width="75" Click="bThird_Click"/>
+    </Grid>
+</Window>
