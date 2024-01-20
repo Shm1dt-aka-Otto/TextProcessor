@@ -5,8 +5,87 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextProcessor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="Текстовый процессор" Height="480" Width="640" MinWidth="412" MinHeight="292" Closing="MainWindow_Close" AllowDrop="True" HorizontalContentAlignment="Stretch">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Icons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid x:Name="gridMain">
+        <Canvas x:Name="canvasDragDrop" Background="#FFBDBDBD" Panel.ZIndex="5" Opacity="0" IsHitTestVisible="False" Visibility="Hidden" AutomationProperties.Name="canvasDragDrop" Margin="0,61,0,0" >
+            <TextBlock TextWrapping="Wrap" Foreground="Black" Panel.ZIndex="1" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"><Run Text="Перетащите, чтобы открыть файл."/><LineBreak/><Run Text="Это перезапишет все остальное!"/></TextBlock>
+        </Canvas>
+        <DockPanel LastChildFill="False" Margin="0,0,0,-0.2">
+            <ToolBarTray x:Name="tbtrayTop" Margin="0" VerticalAlignment="Top" DockPanel.Dock="Top" Tag="skinable" Panel.ZIndex="5">
+                <ToolBar x:Name="tbFile" Height="30" VerticalAlignment="Top" Background="{DynamicResource colorBlueBG}" Foreground="Black" Tag="skinable" BorderBrush="Black" MinWidth="220" MinHeight="30">
+                    <Menu Background="#00F0F0F0" VerticalAlignment="Center">
+                        <MenuItem x:Name="miFile" Header="Файл" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22">
+                            <MenuItem x:Name="miNew" Header="Новый" Margin="0" Click="anyNew_Click" Background="{x:Null}" Icon="{StaticResource iconNew}"/>
+                            <MenuItem x:Name="miOpen" Header="Открыть" Margin="0,0,-2,0" Click="anyOpen_Click" Icon="{StaticResource iconOpen}"/>
+                            <MenuItem x:Name="miSave" Header="Сохранить" Margin="0" Click="anySave_Click" Icon="{StaticResource iconSave}"/>
+                            <MenuItem x:Name="miSaveAs" Header="Сохранить как" Click="anySaveAs_Click" Margin="0,1,-2,0" Background="Transparent" Foreground="Black" Icon="{StaticResource iconSaveAs}"/>
+                            <MenuItem x:Name="miExit" Header="Выйти" Margin="0,1,-2,0" Click="anyExit_Click" Icon="{StaticResource iconExit}"/>
+                        </MenuItem>
+                        <MenuItem x:Name="miEdit" Header="Редактирование" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22" GotFocus="miEdit_Focus" GotKeyboardFocus="miEdit_Focus">
+                            <MenuItem x:Name="miUndo" Header="Отменить" Click="anyUndo_Click" Icon="{StaticResource iconUndo}"/>
+                            <MenuItem x:Name="miRedo" Header="Вернуть" Click="anyRedo_Click" Margin="0" Icon="{StaticResource iconRedo}"/>
+                        </MenuItem>
+                        <MenuItem x:Name="miInsert" Header="Вставка" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22">
+                            <MenuItem x:Name="miInsertImage" Header="Изображение" Margin="0" Click="miInsertImage_Click"/>
+                            <MenuItem x:Name="miInsertHyperLink" Header="Гиперссылка" Margin="0" Click="miInsertHyperLink_Click"/>
+                        </MenuItem>
+                        <MenuItem x:Name="miView" Header="Вид" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22">
+                            <MenuItem x:Name="miFormattingBar" Header="Шрифт" IsCheckable="True" IsChecked="True" Checked="miAnyBar_Checked" Unchecked="miAnyBar_Unchecked"/>
+                            <MenuItem x:Name="miParagraphBar" Header="Абзац" IsCheckable="True" IsChecked="True" Checked="miAnyBar_Checked" Unchecked="miAnyBar_Unchecked"/>
+                        </MenuItem>
+                    </Menu>
+                </ToolBar>
+                <ToolBar x:Name="tbFormatting" Height="30" VerticalAlignment="Top" AutomationProperties.Name="tbFormatting" Band="1" BandIndex="1" Foreground="Black" Tag="skinable" MinHeight="30">
+                    <MenuItem x:Name="miNewBar" Icon="{StaticResource iconNewBar}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Click="anyNew_Click" ToolTip="Новый документ"/>
+                    <MenuItem x:Name="miOpenBar" Icon="{StaticResource iconOpenBar}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Click="anyOpen_Click" ToolTip="Открыть документ"/>
+                    <MenuItem x:Name="miSaveBar" Icon="{StaticResource iconSaveBar}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Click="anySave_Click" ToolTip="Сохранить документ"/>
+                    <Separator/>
+                    <ComboBox x:Name="cbFont" Height="25" Margin="0" VerticalAlignment="Top" Width="140" DropDownClosed="anyFont_DropDownClosed"/>
+                    <ComboBox x:Name="cbFontSize" Height="25" Margin="0" VerticalAlignment="Top" Width="80" DropDownClosed="anyFontSize_DropDownClosed"/>
+                    <Separator/>
+                    <MenuItem x:Name="miBold" Icon="{StaticResource iconBold}" Width="23" Margin="0,2,0,0" IsCheckable="True" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleBold" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="{StaticResource tooltipBold}"/>
+                    <MenuItem x:Name="miItalic" Icon="{StaticResource iconItalic}" Width="23" Margin="0,2,0,0" IsCheckable="True" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleItalic" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="{StaticResource tooltipItalic}"/>
+                    <MenuItem x:Name="miUnderline" Icon="{StaticResource iconUnderline}" Width="23" Margin="0,2,0,0" IsCheckable="True" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleUnderline" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="{StaticResource tooltipUnderline}"/>
+                    <Separator/>
+                    <MenuItem x:Name="miForeground" Icon="{StaticResource iconForeground}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" MouseDown="anyFormat_MouseDown" ToolTip="Изменить цвет переднего плана выделенного текста" Click="miForeground_Click"/>
+                    <MenuItem x:Name="miBackground" Icon="{StaticResource iconBackground}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" MouseDown="anyFormat_MouseDown" ToolTip="Изменить цвет заднего плана выделенного текста" Click="miBackground_Click"/>
+                    <Separator/>
+                    <MenuItem x:Name="miAlignLeft" Icon="{StaticResource iconAlignLeft}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.AlignLeft" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" IsCheckable="True" ToolTip="Выровнить выделенный текст по левому краю (Ctrl+L)"/>
+                    <MenuItem x:Name="miAlignCenter" Icon="{StaticResource iconAlignCenter}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.AlignCenter" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" IsCheckable="True" ToolTip="Выровнить выделенный текст по центру (Ctrl+E)"/>
+                    <MenuItem x:Name="miAlignRight" Icon="{StaticResource iconAlignRight}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.AlignRight" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Выровнить выделенный текст по правому краю (Ctrl+R)"/>
+                    <MenuItem x:Name="miAlignJustify" Icon="{StaticResource iconAlignJustify}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.AlignJustify" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Выровнить выделенный текст по ширине (Ctrl+J)"/>
+                </ToolBar>
+                <ToolBar x:Name="tbParagraph" Height="30" VerticalAlignment="Top" AutomationProperties.Name="tbFormatting" Background="{DynamicResource colorBlueBG}" Band="2" BandIndex="1" Foreground="Black" Tag="skinable" MinHeight="30">
+                    <MenuItem x:Name="miIncreaseIndent" Icon="{StaticResource iconIncreaseIndent}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.IncreaseIndentation" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Увеличить отступ (Ctrl+T)"/>
+                    <MenuItem x:Name="miDecreaseIndent" Icon="{StaticResource iconDecreaseIndent}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.DecreaseIndentation" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Уменьшить отступ (Ctrl+Shift+T)" Header="DecreaseIndentation"/>
+                    <ComboBox x:Name="cbLineSpacing" Width="43" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" DropDownClosed="anyLineSpacing_DropDownClosed" ToolTip="Интервал"/>
+                    <Separator Margin="0,2"/>
+                    <MenuItem x:Name="miBulletList" Icon="{StaticResource iconBullet}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleBullets" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Включить маркированный список (Ctrl+Shift+L)" />
+                    <MenuItem x:Name="miNumberedList" Icon="{StaticResource iconNumbered}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleNumbering" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Включить нумерованный список (Ctrl+Shift+N)" />
+                </ToolBar>
+                <!--<ToolBar x:Name="tbFormattingExtra" Band="2" MinHeight="30"></ToolBar>-->
+            </ToolBarTray>
+
+            <RichTextBox x:Name="rtbMain" IsDocumentEnabled="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" TextChanged="rtbMain_TextChanged" 
+                         SelectionChanged="rtbMain_SelectionChanged" AcceptsTab="True" RenderTransformOrigin="0.5,0.5" AutomationProperties.Name="rtbMain" 
+                         AllowDrop="True" DragOver="rtbMain_DragOver" Drop="rtbMain_Drop" DragLeave="rtbMain_DragLeave" DragEnter="rtbMain_DragEnter"
+                         Panel.ZIndex="2" Background="White" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" />
+
+            <Canvas x:Name="canvasSidebar" DockPanel.Dock="Right" Margin="0" Panel.ZIndex="4" Background="#FFF4F4F4" Tag="skinable" AutomationProperties.Name="canvasSidebar" >
+                <Canvas.Effect>
+                    <DropShadowEffect Direction="180" ShadowDepth="1"/>
+                </Canvas.Effect>
+                <Frame x:Name="frameSidebar" Panel.ZIndex="6" ContentRendered="frameSidebar_ContentRendered" />
+                <Button x:Name="bCloseSidebar" Content="X" Canvas.Left="-20" Canvas.Top="10" Width="20" AutomationProperties.Name="bCloseSidebar" Click="bCloseSidebar_Click" Opacity="0" IsHitTestVisible="False"/>
+            </Canvas>
+
+        </DockPanel>
     </Grid>
 </Window>
