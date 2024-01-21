@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Xml;
 using Path = System.IO.Path;
 using TextProcessor.Classes;
+using System.IO.Compression;
 
 namespace TextProcessor
 {
@@ -140,10 +141,18 @@ namespace TextProcessor
             switch (fileExtension)
             {
                 case ".rtf":
-                    rtbLoad.Selection.Load(new FileStream(filePath, FileMode.Open), DataFormats.Rtf);
+                    using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                        using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
+                        {
+                            rtbLoad.Selection.Load(gZipStream, DataFormats.Rtf);
+                        }
                     break;
                 case ".txt":
-                    rtbLoad.Selection.Load(new FileStream(filePath, FileMode.Open), DataFormats.Text);
+                    using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                        using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
+                        {
+                            rtbLoad.Selection.Load(gZipStream, DataFormats.Text);
+                        }
                     break;
                 case ".xml":
                     XmlReader xmlReader = XmlReader.Create(filePath);
@@ -152,11 +161,15 @@ namespace TextProcessor
                     rtbLoad.Document = (FlowDocument)(XamlReader.Load(xmlReader));
                     break;
                 default:
-                    rtbLoad.Selection.Load(new FileStream(filePath, FileMode.Open), DataFormats.Text);
+                    using (FileStream stream = new FileStream(filePath, FileMode.Open))
+                        using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Decompress))
+                        {
+                            rtbLoad.Selection.Load(gZipStream, DataFormats.Text);
+                        }
                     break;
             }
-
             unsavedChanges = false;
+            
             return true;
         }
 
@@ -169,10 +182,18 @@ namespace TextProcessor
             switch (fileExtension)
             {
                 case ".rtf":
-                    rtbSave.Selection.Save(new FileStream(filePath, FileMode.Create), DataFormats.Rtf);
+                    using (stream = new FileStream(filePath, FileMode.Create))
+                        using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Compress))
+                        {
+                            rtbSave.Selection.Save(gZipStream, DataFormats.Rtf);
+                        }
                     break;
                 case ".txt":
-                    rtbSave.Selection.Save(stream = new FileStream(filePath, FileMode.Create), DataFormats.Text);
+                    using (stream = new FileStream(filePath, FileMode.Create))
+                        using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Compress))
+                        {
+                            rtbSave.Selection.Save(gZipStream, DataFormats.Text);
+                        }
                     break;
                 case ".xml":
                     XmlDocument xdoc = new XmlDocument();
@@ -180,10 +201,13 @@ namespace TextProcessor
                     xdoc.Save(filePath);
                     break;
                 default:
-                    rtbSave.Selection.Save(stream = new FileStream(filePath, FileMode.Create), DataFormats.Text);
+                    using (stream = new FileStream(filePath, FileMode.Create))
+                        using (GZipStream gZipStream = new GZipStream(stream, CompressionMode.Compress))
+                        {
+                            rtbSave.Selection.Save(gZipStream, DataFormats.Text);
+                        }
                     break;
             }
-
             unsavedChanges = false;
             currentlyOpenPath = filePath;
 
