@@ -80,9 +80,11 @@ namespace TextProcessor
             ofdImage.Filter = "Доступные форматы изображения (*.png, *.jpg, *.jpeg, *.bmp)|*.png;*.jpg;*.jpeg;*.bmp";
             ofdImage.Title = "Открыть изображение | Текстовый процессор";
 
+            System.Windows.Media.FontFamily fontFamily = new FontFamily();
             foreach (System.Drawing.FontFamily font in System.Drawing.FontFamily.Families)
             {
                 cbFont.Items.Add(new ComboBoxItem() { Content = font.Name, FontFamily = new FontFamily(font.Name) });
+                fontFamily = new FontFamily(font.Name);
             }
 
             cbFontSize.ItemsSource = new List<Double>() { 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72, 102, 144, 288 };
