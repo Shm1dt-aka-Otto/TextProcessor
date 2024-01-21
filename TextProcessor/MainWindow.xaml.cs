@@ -15,8 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml;
 using Path = System.IO.Path;
-using TextProcessor.Classes;
 using System.IO.Compression;
+using TextProcessor.Classes;
 
 namespace TextProcessor
 {
@@ -42,6 +42,9 @@ namespace TextProcessor
 
         bool findReplaceChanges = true;
         FindAndReplaceManager findAndReplace = new FindAndReplaceManager(new FlowDocument());
+
+        private List<Classes.Page> pages;
+        private int currentPageIndex;
 
         public MainWindow()
         {
@@ -86,6 +89,52 @@ namespace TextProcessor
             rtbMain.AddHandler(RichTextBox.DropEvent, new DragEventHandler(rtbMain_Drop), true);
             rtbMain.AddHandler(RichTextBox.DragEnterEvent, new DragEventHandler(rtbMain_DragEnter), true);
             rtbMain.AddHandler(RichTextBox.DragLeaveEvent, new DragEventHandler(rtbMain_DragLeave), true);
+
+            pages = new List<Classes.Page>();
+            currentPageIndex = 0;
+
+            AddNewPage();
+            UpdateRichTextBoxContent();
+        }
+
+        private void AddNewPage()
+        {
+            var currentPageContent = new TextRange(rtbMain.Document.ContentStart, rtbMain.Document.ContentEnd).Text;
+            pages.Add(new Classes.Page
+            {
+                Content = currentPageContent,
+                Number = pages.Count + 1
+            });
+
+            rtbMain.Document.Blocks.Clear();
+        }
+
+        private void UpdateRichTextBoxContent()
+        {
+            if (currentPageIndex < pages.Count)
+            {
+                var page = pages[currentPageIndex];
+                new TextRange(rtbMain.Document.ContentStart, rtbMain.Document.ContentEnd).Text = page.Content;
+                txtPageNumber.Text = $"Page {pages[currentPageIndex].Number}";
+            }
+        }
+
+        private void rtbMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                AddNewPage();
+                UpdateRichTextBoxContent();
+            }
+        }
+
+        private void UpdatePageNumber()
+        {
+            double pageSize = 11 * 96;
+
+            int pageNumber = (int)Math.Ceiling(rtbMain.ExtentHeight / pageSize);
+
+            txtPageNumber.Text = $"{pageNumber}";
         }
 
         private void MainWindow_Close(object sender, System.ComponentModel.CancelEventArgs e)
@@ -217,6 +266,7 @@ namespace TextProcessor
         private void rtbMain_TextChanged(object sender, TextChangedEventArgs e)
         {
             unsavedChanges = true;
+            UpdatePageNumber();
         }
 
         private void rtbMain_SelectionChanged(object sender, RoutedEventArgs e)
@@ -576,7 +626,7 @@ namespace TextProcessor
 
         private void frameSidebar_ContentRendered(object sender, EventArgs e)
         {
-            var content = frameSidebar.Content as Page;
+            var content = frameSidebar.Content as System.Windows.Controls.Page;
             var grid = content.Content as Grid;
 
             switch (content.Title)
@@ -606,7 +656,7 @@ namespace TextProcessor
 
         private void bFindReplace_Click(object sender, RoutedEventArgs e)
         {
-            var content = frameSidebar.Content as Page;
+            var content = frameSidebar.Content as System.Windows.Controls.Page;
             string action = "Найти далее";
             var grid = content.Content as Grid;
             TextBox tbFind = (TextBox)grid.Children[2];
