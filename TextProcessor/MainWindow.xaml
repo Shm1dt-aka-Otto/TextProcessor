@@ -26,6 +26,7 @@
                             <MenuItem x:Name="miOpen" Header="Открыть" Margin="0,0,-2,0" Click="anyOpen_Click" Icon="{StaticResource iconOpen}"/>
                             <MenuItem x:Name="miSave" Header="Сохранить" Margin="0" Click="anySave_Click" Icon="{StaticResource iconSave}"/>
                             <MenuItem x:Name="miSaveAs" Header="Сохранить как" Click="anySaveAs_Click" Margin="0,1,-2,0" Background="Transparent" Foreground="Black" Icon="{StaticResource iconSaveAs}"/>
+                            <Separator/>
                             <MenuItem x:Name="miExit" Header="Выйти" Margin="0,1,-2,0" Click="anyExit_Click" Icon="{StaticResource iconExit}"/>
                         </MenuItem>
                         <MenuItem x:Name="miEdit" Header="Редактирование" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22" GotFocus="miEdit_Focus" GotKeyboardFocus="miEdit_Focus">
@@ -33,7 +34,6 @@
                             <MenuItem x:Name="miRedo" Header="Вернуть" Click="anyRedo_Click" Margin="0" Icon="{StaticResource iconRedo}"/>
                             <Separator/>
                             <MenuItem x:Name="miFindReplace" Header="Поиск и замена" Click="miFindReplace_Click"/>
-                            <Separator/>
                         </MenuItem>
                         <MenuItem x:Name="miInsert" Header="Вставка" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22">
                             <MenuItem x:Name="miInsertImage" Header="Изображение" Margin="0" Click="miInsertImage_Click"/>
