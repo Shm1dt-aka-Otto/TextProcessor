@@ -15,8 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml;
 using Path = System.IO.Path;
-using TextProcessor.Classes;
 using System.IO.Compression;
+using TextProcessor.Classes;
 
 namespace TextProcessor
 {
@@ -626,7 +626,7 @@ namespace TextProcessor
 
         private void frameSidebar_ContentRendered(object sender, EventArgs e)
         {
-            var content = frameSidebar.Content as Page;
+            var content = frameSidebar.Content as System.Windows.Controls.Page;
             var grid = content.Content as Grid;
 
             switch (content.Title)
@@ -656,7 +656,7 @@ namespace TextProcessor
 
         private void bFindReplace_Click(object sender, RoutedEventArgs e)
         {
-            var content = frameSidebar.Content as Page;
+            var content = frameSidebar.Content as System.Windows.Controls.Page;
             string action = "Найти далее";
             var grid = content.Content as Grid;
             TextBox tbFind = (TextBox)grid.Children[2];
