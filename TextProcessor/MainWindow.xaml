@@ -76,6 +76,14 @@
                     <MenuItem x:Name="miBulletList" Icon="{StaticResource iconBullet}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleBullets" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Включить маркированный список (Ctrl+Shift+L)" />
                     <MenuItem x:Name="miNumberedList" Icon="{StaticResource iconNumbered}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleNumbering" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Включить нумерованный список (Ctrl+Shift+N)" />
                     <Separator Margin="0,2"/>
+                    <ListBox x:Name="lstStyles" DisplayMemberPath="StyleName"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Применить стиль" Click="btnApplyStyle_Click"/>
+                        <Button Content="Сохранить стиль" Click="btnSaveCustomStyle_Click"/>
+                        <TextBox x:Name="txtNewStyleName" Width="100"/>
+                        <Button Content="Добавить новый стиль" Click="btnAddNewStyle_Click"/>
+                    </StackPanel>
+                    <Separator Margin="0,2"/>
                     <TextBlock x:Name="txtPageNumber" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" TextAlignment="Center"/>
                 </ToolBar>
                 <!--<ToolBar x:Name="tbFormattingExtra" Band="2" MinHeight="30"></ToolBar>-->

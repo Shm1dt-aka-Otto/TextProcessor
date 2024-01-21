@@ -46,6 +46,9 @@ namespace TextProcessor
         private List<Classes.Page> pages;
         private int currentPageIndex;
 
+        private List<CustomStyle> customStyles;
+        private CustomStyle currentStyle;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -95,6 +98,27 @@ namespace TextProcessor
 
             AddNewPage();
             UpdateRichTextBoxContent();
+
+            customStyles = new List<CustomStyle>();
+            customStyles.Add(new CustomStyle
+            {
+                StyleName = "Стандартный",
+                BoldStyle = false,
+                ItalicStyle = false,
+                UnderlineStyle = false,
+                AlignLeft = true,
+                AlignCenter = false,
+                AlignRight = false,
+                AlignJustify = false,
+                LineHeightProperty = 16.0,
+                FontSize = 14,
+                FontFamily = fontFamily
+            });
+            lstStyles.ItemsSource = customStyles;
+
+            currentStyle = customStyles[0];
+
+            ApplyStyle();
         }
 
         private void AddNewPage()
@@ -125,6 +149,83 @@ namespace TextProcessor
             {
                 AddNewPage();
                 UpdateRichTextBoxContent();
+            }
+        }
+
+        private void ApplyStyle()
+        {
+            if (currentStyle.BoldStyle)
+                rtbMain.Selection.ApplyPropertyValue(Inline.FontWeightProperty, FontWeights.Bold);
+            if (currentStyle.ItalicStyle)
+                rtbMain.Selection.ApplyPropertyValue(Inline.FontStyleProperty, FontStyles.Italic);
+            if (currentStyle.UnderlineStyle)
+                rtbMain.Selection.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
+            if (currentStyle.AlignLeft)
+                rtbMain.Selection.Start.Paragraph.TextAlignment = TextAlignment.Left;
+            if (currentStyle.AlignCenter)
+                rtbMain.Selection.Start.Paragraph.TextAlignment = TextAlignment.Center;
+            if (currentStyle.AlignRight)
+                rtbMain.Selection.Start.Paragraph.TextAlignment = TextAlignment.Right;
+            if (currentStyle.AlignJustify)
+                rtbMain.Selection.Start.Paragraph.TextAlignment = TextAlignment.Justify;
+            rtbMain.Selection.ApplyPropertyValue(Paragraph.LineHeightProperty, Convert.ToString(currentStyle.LineHeightProperty));
+            rtbMain.Selection.ApplyPropertyValue(Inline.FontSizeProperty, Convert.ToString(currentStyle.FontSize));
+            rtbMain.Selection.ApplyPropertyValue(Inline.FontFamilyProperty, currentStyle.FontFamily);
+        }
+
+        private void btnApplyStyle_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstStyles.SelectedItem is CustomStyle selectedStyle)
+            {
+                currentStyle = selectedStyle;
+                ApplyStyle();
+            }
+        }
+
+        private void btnSaveCustomStyle_Click(object sender, RoutedEventArgs e)
+        {
+            var newStyle = new CustomStyle
+            {
+                StyleName = "Новый стиль" + (customStyles.Count + 1),
+                BoldStyle = miBold.IsChecked,
+                ItalicStyle = miItalic.IsChecked,
+                UnderlineStyle = miUnderline.IsChecked,
+                AlignLeft = miAlignLeft.IsChecked,
+                AlignCenter = miAlignCenter.IsChecked,
+                AlignRight = miAlignRight.IsChecked,
+                AlignJustify = miAlignJustify.IsChecked,
+                LineHeightProperty = Convert.ToDouble(cbLineSpacing.SelectedItem),
+                FontSize = Convert.ToInt16(cbFontSize.SelectedItem),
+                FontFamily = ((ComboBoxItem)cbFont.SelectedItem).FontFamily
+            };
+
+            customStyles.Add(newStyle);
+            lstStyles.ItemsSource = null;
+            lstStyles.ItemsSource = customStyles;
+        }
+
+        private void btnAddNewStyle_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtNewStyleName.Text))
+            {
+                var newStyle = new CustomStyle
+                {
+                    StyleName = txtNewStyleName.Text,
+                    BoldStyle = miBold.IsChecked,
+                    ItalicStyle = miItalic.IsChecked,
+                    UnderlineStyle = miUnderline.IsChecked,
+                    AlignLeft = miAlignLeft.IsChecked,
+                    AlignCenter = miAlignCenter.IsChecked,
+                    AlignRight = miAlignRight.IsChecked,
+                    AlignJustify = miAlignJustify.IsChecked,
+                    LineHeightProperty = Convert.ToDouble(cbLineSpacing.SelectedItem),
+                    FontSize = Convert.ToInt16(cbFontSize.SelectedItem),
+                    FontFamily = ((ComboBoxItem)cbFont.SelectedItem).FontFamily
+                };
+
+                customStyles.Add(newStyle);
+                lstStyles.ItemsSource = null;
+                lstStyles.ItemsSource = customStyles;
             }
         }
 
