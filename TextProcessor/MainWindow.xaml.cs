@@ -556,11 +556,94 @@ namespace TextProcessor
         {
             var content = frameSidebar.Content as Page;
             var grid = content.Content as Grid;
+            switch (content.Title)
+            {
+                case "Поиск и замена":
+                    Button bFind = (Button)grid.Children[5];
+                    Button bReplace = (Button)grid.Children[6];
+                    Button bReplaceNext = (Button)grid.Children[7];
+                    bFind.Click += bFindReplace_Click;
+                    bReplace.Click += bFindReplace_Click;
+                    bReplaceNext.Click += bFindReplace_Click;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void bCloseSidebar_Click(object sender, RoutedEventArgs e)
         {
             SidebarClose();
+        }
+
+        private void miFindReplace_Click(object sender, RoutedEventArgs e)
+        {
+            SidebarOpen(new Uri("/SidebarPages/FindReplace.xaml", UriKind.Relative));
+        }
+
+        private void bFindReplace_Click(object sender, RoutedEventArgs e)
+        {
+            var content = frameSidebar.Content as Page;
+            var grid = content.Content as Grid;
+            TextBox tbFind = (TextBox)grid.Children[2];
+            TextBox tbReplace = (TextBox)grid.Children[4];
+            var expander = (Expander)grid.Children[8];
+            CheckBox cbMatchCase = (CheckBox)((Grid)expander.Content).Children[0];
+            CheckBox cbMatchWord = (CheckBox)((Grid)expander.Content).Children[1];
+            TextRange textRange = null;
+            FindOptions findOptions = FindOptions.None;
+            if (cbMatchCase.IsChecked == true)
+                findOptions = FindOptions.MatchCase;
+            if (cbMatchWord.IsChecked == true)
+                findOptions ^= FindOptions.MatchWholeWord;
+            if (findReplaceChanges)
+            {
+                findAndReplace = new FindAndReplaceManager(rtbMain.Document);
+                findReplaceChanges = false;
+            }
+            string action = "Найти далее";
+            switch (((Button)sender).Content.ToString())
+            {
+                case "Найти далее":
+                    textRange = findAndReplace.FindNext(tbFind.Text, findOptions);
+                    string action = "Найти далее";
+                    break;
+                case "Заменить все":
+                    int results = findAndReplace.ReplaceAll(tbFind.Text, tbReplace.Text, findOptions, null);
+                    customMessageBox customMessageBox = new customMessageBox();
+                    customMessageBox.SetupMsgBox($"Replaced {results} occurences.", "Replace All", this.FindResource("iconInformation"));
+                    customMessageBox.ShowDialog();
+                    rtbMain.Focus();
+                    return;
+                case "Заменить":
+                    textRange = findAndReplace.Replace(tbFind.Text, tbReplace.Text, findOptions);
+                    string action = "Заменить";
+                    break;
+                default:
+                    break;
+            }
+
+            if (textRange == null)
+            {
+                customMessageBox customMessageBox = new customMessageBox();
+                customMessageBox.SetupMsgBox("Нет (больше) результатов.\nВы хотите снова начать с самого верха?", "Сбросить поиск?", this.FindResource("iconInformation"), "Да", "Нет");
+                customMessageBox.ShowDialog();
+                if (customMessageBox.result.ToString() == "Да")
+                {
+                    findAndReplace = new FindAndReplaceManager(rtbMain.Document);
+                    findReplaceChanges = false;
+                    if (action == "Найти далее")
+                        textRange = findAndReplace.FindNext(tbFind.Text, findOptions);
+                    else
+                        textRange = findAndReplace.Replace(tbFind.Text, findOptions);
+                    if (textRange == null)
+                        return;
+                }
+                else
+                    return;
+            }
+            rtbMain.Selection.Select(textRange.Start, textRange.End);
+            rtbMain.Focus();
         }
 
         private void miForeground_Click(object sender, RoutedEventArgs e)
