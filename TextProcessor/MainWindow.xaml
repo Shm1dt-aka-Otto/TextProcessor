@@ -81,8 +81,10 @@
             <RichTextBox x:Name="rtbMain" IsDocumentEnabled="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" TextChanged="rtbMain_TextChanged" 
                          SelectionChanged="rtbMain_SelectionChanged" AcceptsTab="True" RenderTransformOrigin="0.5,0.5" AutomationProperties.Name="rtbMain" 
                          AllowDrop="True" DragOver="rtbMain_DragOver" Drop="rtbMain_Drop" DragLeave="rtbMain_DragLeave" DragEnter="rtbMain_DragEnter"
-                         Panel.ZIndex="2" Background="White" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" />
+                         Panel.ZIndex="2" Background="White" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" KeyDown="rtbMain_KeyDown"/>
 
+            <TextBlock x:Name="txtPageNumber" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10"/>
+            
             <Canvas x:Name="canvasSidebar" DockPanel.Dock="Right" Margin="0" Panel.ZIndex="4" Background="#FFF4F4F4" Tag="skinable" AutomationProperties.Name="canvasSidebar" >
                 <Canvas.Effect>
                     <DropShadowEffect Direction="180" ShadowDepth="1"/>
