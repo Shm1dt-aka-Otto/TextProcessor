@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
@@ -17,9 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
 using Path = System.IO.Path;
+using TextProcessor.Classes;
 
 namespace TextProcessor
 {
@@ -42,6 +38,9 @@ namespace TextProcessor
         public SaveFileDialog sfdSave = new SaveFileDialog();
         public OpenFileDialog ofdOpen = new OpenFileDialog();
         private OpenFileDialog ofdImage = new OpenFileDialog();
+
+        bool findReplaceChanges = true;
+        FindAndReplaceManager findAndReplace = new FindAndReplaceManager(new FlowDocument());
 
         public MainWindow()
         {
@@ -499,7 +498,6 @@ namespace TextProcessor
         {
             if (cbLineSpacing.SelectedItem != null)
                 rtbMain.Selection.ApplyPropertyValue(Paragraph.LineHeightProperty, cbLineSpacing.SelectedItem);
-                //rtbMain.SetValue(Paragraph.LineHeightProperty, cbLineSpacing.SelectedItem);
             rtbMain.Focus();
         }
 
@@ -556,6 +554,7 @@ namespace TextProcessor
         {
             var content = frameSidebar.Content as Page;
             var grid = content.Content as Grid;
+
             switch (content.Title)
             {
                 case "Поиск и замена":
@@ -584,6 +583,7 @@ namespace TextProcessor
         private void bFindReplace_Click(object sender, RoutedEventArgs e)
         {
             var content = frameSidebar.Content as Page;
+            string action = "Найти далее";
             var grid = content.Content as Grid;
             TextBox tbFind = (TextBox)grid.Children[2];
             TextBox tbReplace = (TextBox)grid.Children[4];
@@ -601,23 +601,22 @@ namespace TextProcessor
                 findAndReplace = new FindAndReplaceManager(rtbMain.Document);
                 findReplaceChanges = false;
             }
-            string action = "Найти далее";
             switch (((Button)sender).Content.ToString())
             {
                 case "Найти далее":
                     textRange = findAndReplace.FindNext(tbFind.Text, findOptions);
-                    string action = "Найти далее";
+                    action = "Найти далее";
                     break;
                 case "Заменить все":
                     int results = findAndReplace.ReplaceAll(tbFind.Text, tbReplace.Text, findOptions, null);
-                    customMessageBox customMessageBox = new customMessageBox();
-                    customMessageBox.SetupMsgBox($"Replaced {results} occurences.", "Replace All", this.FindResource("iconInformation"));
+                    CustomMessageBox customMessageBox = new CustomMessageBox();
+                    customMessageBox.SetupMsgBox($"Число выполненных замен: {results}.", "Заменить все", this.FindResource("iconInformation"));
                     customMessageBox.ShowDialog();
                     rtbMain.Focus();
                     return;
                 case "Заменить":
                     textRange = findAndReplace.Replace(tbFind.Text, tbReplace.Text, findOptions);
-                    string action = "Заменить";
+                    action = "Заменить";
                     break;
                 default:
                     break;
@@ -625,17 +624,17 @@ namespace TextProcessor
 
             if (textRange == null)
             {
-                customMessageBox customMessageBox = new customMessageBox();
+                CustomMessageBox customMessageBox = new CustomMessageBox();
                 customMessageBox.SetupMsgBox("Нет (больше) результатов.\nВы хотите снова начать с самого верха?", "Сбросить поиск?", this.FindResource("iconInformation"), "Да", "Нет");
                 customMessageBox.ShowDialog();
                 if (customMessageBox.result.ToString() == "Да")
                 {
                     findAndReplace = new FindAndReplaceManager(rtbMain.Document);
                     findReplaceChanges = false;
-                    if (action == "Найти далее")
-                        textRange = findAndReplace.FindNext(tbFind.Text, findOptions);
+                    if (action == "Заменить")
+                        textRange = findAndReplace.Replace(tbFind.Text, tbReplace.Text, findOptions);
                     else
-                        textRange = findAndReplace.Replace(tbFind.Text, findOptions);
+                        textRange = findAndReplace.FindNext(tbFind.Text, findOptions);
                     if (textRange == null)
                         return;
                 }
