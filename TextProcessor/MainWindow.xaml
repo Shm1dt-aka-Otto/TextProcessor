@@ -34,6 +34,9 @@
                             <MenuItem x:Name="miRedo" Header="Вернуть" Click="anyRedo_Click" Margin="0" Icon="{StaticResource iconRedo}"/>
                             <Separator/>
                             <MenuItem x:Name="miFindReplace" Header="Поиск и замена" Click="miFindReplace_Click"/>
+                            <Separator/>
+                            <MenuItem x:Name="miNextPage" Header="Следующая страница" Click="anyNextPage_Click" Icon="{StaticResource iconRedo}"/>
+                            <MenuItem x:Name="miPreviousPage" Header="Предыдущая страница" Click="anyPrevPage_Click" Margin="0" Icon="{StaticResource iconUndo}"/>
                         </MenuItem>
                         <MenuItem x:Name="miInsert" Header="Вставка" Margin="0" BorderThickness="0" ClipToBounds="True" Height="22">
                             <MenuItem x:Name="miInsertImage" Header="Изображение" Margin="0" Click="miInsertImage_Click"/>
@@ -73,7 +76,7 @@
                     <MenuItem x:Name="miBulletList" Icon="{StaticResource iconBullet}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleBullets" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Включить маркированный список (Ctrl+Shift+L)" />
                     <MenuItem x:Name="miNumberedList" Icon="{StaticResource iconNumbered}" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" Command="EditingCommands.ToggleNumbering" Click="anyFormat_Click" MouseDown="anyFormat_MouseDown" ToolTip="Включить нумерованный список (Ctrl+Shift+N)" />
                     <Separator Margin="0,2"/>
-                    <TextBlock x:Name="txtPageNumber" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5"/>
+                    <TextBlock x:Name="txtPageNumber" Width="23" Margin="0,2,0,0" RenderTransformOrigin="0.5,0.5" TextAlignment="Center"/>
                 </ToolBar>
                 <!--<ToolBar x:Name="tbFormattingExtra" Band="2" MinHeight="30"></ToolBar>-->
             </ToolBarTray>
@@ -82,8 +85,6 @@
                          SelectionChanged="rtbMain_SelectionChanged" AcceptsTab="True" RenderTransformOrigin="0.5,0.5" AutomationProperties.Name="rtbMain" 
                          AllowDrop="True" DragOver="rtbMain_DragOver" Drop="rtbMain_Drop" DragLeave="rtbMain_DragLeave" DragEnter="rtbMain_DragEnter"
                          Panel.ZIndex="2" Background="White" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" KeyDown="rtbMain_KeyDown"/>
-
-            <TextBlock x:Name="txtPageNumber" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10"/>
             
             <Canvas x:Name="canvasSidebar" DockPanel.Dock="Right" Margin="0" Panel.ZIndex="4" Background="#FFF4F4F4" Tag="skinable" AutomationProperties.Name="canvasSidebar" >
                 <Canvas.Effect>

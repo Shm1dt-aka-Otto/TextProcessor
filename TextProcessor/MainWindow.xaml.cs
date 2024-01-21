@@ -115,7 +115,7 @@ namespace TextProcessor
             {
                 var page = pages[currentPageIndex];
                 new TextRange(rtbMain.Document.ContentStart, rtbMain.Document.ContentEnd).Text = page.Content;
-                txtPageNumber.Text = $"Page {pages[currentPageIndex].Number}";
+                txtPageNumber.Text = $"{pages[currentPageIndex].Number}";
             }
         }
 
@@ -585,6 +585,24 @@ namespace TextProcessor
         {
             if (rtbMain.CanRedo)
                 rtbMain.Redo();
+        }
+
+        private void anyNextPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentPageIndex < pages.Count - 1)
+            {
+                currentPageIndex++;
+                UpdateRichTextBoxContent();
+            }
+        }
+
+        private void anyPrevPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentPageIndex > 0)
+            {
+                currentPageIndex--;
+                UpdateRichTextBoxContent();
+            }
         }
 
         private void miEdit_Focus(object sender, RoutedEventArgs e)
